@@ -11,7 +11,6 @@ yarn-error.log*
 # Logs
 logs/
 *.log
-pids/
 *.pid
 *.seed
 
@@ -35,19 +34,5 @@ postgres_data/
 *.njsproj
 *.sln
 
-# OS files
-.DS_Store
-Thumbs.db
-
-# Optional npm cache
-.npm/
-
-# Coverage reports
-coverage/
-*.lcov
-
-# Jest
-jest/
-
-# Misc
-*.tgz
+# AWS Lambda
+lambda rm 4rm folder when using/lambda_function
