@@ -36,7 +36,7 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}:${{ github.sha }}
-                
+
   deploy_to_staging: # This job runs after build
     needs: [build]
     runs-on: ubuntu-latest
