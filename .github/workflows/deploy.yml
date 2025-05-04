@@ -66,8 +66,8 @@ jobs:
       #       aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_REGISTRY }}
       #       docker pull ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}:${IMAGE_TAG}
       #       sudo systemctl restart docker
-      #       docker compose down --remove-orphans
-      #       docker compose up -d --force-recreate
+      #       docker-compose down --remove-orphans  # <- updated
+      #       docker-compose up -d --force-recreate  # <- updated
       #       docker image prune -af
       #       EOF
 
@@ -78,7 +78,7 @@ jobs:
         with:
           host: ${{ secrets.PUBLIC_EC2_HOST }}        # Public EC2's IP or DNS
           username: ${{ secrets.PUBLIC_EC2_USER }}    # SSH user (e.g. ubuntu)
-          key: ${{ secrets.PUBLIC_EC2_SSH_KEY }}       # Private key for your public EC2
+          key: ${{ secrets.PUBLIC_EC2_SSH_KEY }}      # Private key for your public EC2
           script: |
             set -ex
             export IMAGE_TAG=${{ github.sha }}
@@ -105,6 +105,6 @@ jobs:
             # 3. Pull and run the new image
             docker pull $AWS_ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG
             sudo systemctl restart docker
-            docker compose down --remove-orphans
-            docker compose up -d --force-recreate
+            docker-compose down --remove-orphans  # <- updated
+            docker-compose up -d --force-recreate  # <- updated
             docker image prune -af
