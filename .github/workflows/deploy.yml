@@ -82,27 +82,28 @@ jobs:
           script: |
             set -ex
             export IMAGE_TAG=${{ github.sha }}
+            export AWS_REGION=${{ secrets.AWS_REGION }}
+            export AWS_ECR_REGISTRY=${{ secrets.AWS_ECR_REGISTRY }}
+            export AWS_ECR_REPOSITORY=${{ secrets.AWS_ECR_REPOSITORY }}
 
             # Navigate to the project directory on EC2
             cd ~/inventory-management
 
             # 1. Generate .env from GitHub Secrets
-            cat <<EOT > .env
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_HOST=${{ secrets.DB_HOST }}
-            DB_NAME=${{ secrets.DB_NAME }}
-            DB_PORT=${{ secrets.DB_PORT }}
-            PORT=${{ secrets.APP_PORT }}
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-            EOT
+            echo "DB_USER=${{ secrets.DB_USER }}" > .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+            echo "PORT=${{ secrets.APP_PORT }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
             # 2. Log in to AWS ECR
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
-              | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_REGISTRY }}
+            aws ecr get-login-password --region $AWS_REGION \
+              | docker login --username AWS --password-stdin $AWS_ECR_REGISTRY
 
             # 3. Pull and run the new image
-            docker pull ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}:${IMAGE_TAG}
+            docker pull $AWS_ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG
             sudo systemctl restart docker
             docker compose down --remove-orphans
             docker compose up -d --force-recreate
